@@ -1,0 +1,37 @@
+version: "3.8"
+
+networks:
+  server:
+    driver: bridge
+
+services :
+  php:
+    build:
+      context: "./.docker"
+    restart: always
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    networks:
+      - server
+  db:
+    image: "postgres:14.4"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user1
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: postgres
+    networks:
+      - server
+  admin:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8081:8080"
+    networks:
+      - server
+
